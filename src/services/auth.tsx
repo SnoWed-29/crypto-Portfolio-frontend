@@ -41,3 +41,20 @@ export const loginUser = async (data: LoginData) => {
     throw error;
   }
 };
+
+export const logoutUser = async () => { 
+  try {
+    await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
+  } catch (error) {
+    console.error('Error logging out user:', error);
+    throw error;
+  }
+ };
+export const checkUser = async() => {
+  try{
+    const response = await axios.get(`${API_URL}/check`, { withCredentials: true });
+    return response.data;
+  }catch(error){  
+    console.log('Error checking user:', error);
+  }
+}

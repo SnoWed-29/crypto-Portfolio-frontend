@@ -1,35 +1,39 @@
 import './App.css';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
+import { useContext } from 'react';
+import { UserProvider, UserContext } from './context/UserContext';
 import Home from './views/Home';
 import Login from './views/Login';
 import Register from './views/Register';
+import Porfolio from './views/Porfolio';
+import Transactions from './views/Transactions';
 
-const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = Cookies.get('access_token');
-    console.log('Token from Cookies:', token); 
-    setIsLoggedIn(!!token);
-    setLoading(false);
-  }, []);
-
-  console.log('isLoggedIn:', isLoggedIn); 
+const AppContent = () => {
+  const { user, loading } = useContext(UserContext);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
+  const isLoggedIn = !!user;
+
   return (
     <Routes>
       <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/portfolio/:id" element={isLoggedIn ? <Porfolio /> : <Navigate to="/login" />} />
+      <Route path="/transactions" element={isLoggedIn ? <Transactions /> : <Navigate to="/login" />} />
+      <Route path="/login" element={isLoggedIn ? <Navigate to="/" /> : <Login />} />
+      <Route path="/register" element={isLoggedIn ? <Navigate to="/" /> : <Register />} />
     </Routes>
+  );
+};
+
+const App = () => {
+  return (
+    <UserProvider>
+      <AppContent />
+    </UserProvider>
   );
 };
 
